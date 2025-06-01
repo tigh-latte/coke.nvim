@@ -46,17 +46,17 @@ function M.fmt(ctx)
 end
 
 function M.colour()
-	if not M.is_main then
+	if not M.dirty then
 		return {
-			bg = "#73b8f1",
-			fg = "#212121",
+			bg = "#444444",
+			fg = "#abb2bf",
 			bold = true,
 		}
 	end
 
-	if M.dirty then
+	if not M.is_main then
 		return {
-			bg = "#af5f5a",
+			bg = "#73b8f1",
 			fg = "#212121",
 			bold = true,
 		}

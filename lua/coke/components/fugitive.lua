@@ -47,11 +47,19 @@ end
 function M.colour()
 	local head = vim.fn.FugitiveHead()
 	if head == "main" or head == "master" then
-		return {
-			bg = M.dirty and "#af5f5a" or "#444444",
-			fg = "#212121",
-			bold = true,
-		}
+		if M.dirty then
+			return {
+				bg = "#af5f5a",
+				fg = "#212121",
+				bold = true,
+			}
+		else
+			return {
+				bg = "#444444",
+				fg = "#abb2bf",
+				bold = true,
+			}
+		end
 	end
 
 	return {

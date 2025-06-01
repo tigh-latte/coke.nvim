@@ -31,7 +31,7 @@ M.events = { {
 		callback = cb,
 	},
 }, {
-	kind = { "BufEnter", "BufWinEnter" },
+	kind = { "BufWritePost", "BufEnter", "BufWinEnter" },
 	opts = {
 		callback = cb,
 	},

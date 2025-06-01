@@ -62,8 +62,8 @@ function M.colour()
 		}
 	else
 		return {
-			bg = "#444444",
-			fg = "#abb2bf",
+			bg = "#af5f5a",
+			fg = "#212121",
 			bold = true,
 		}
 	end

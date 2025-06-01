@@ -1,9 +1,13 @@
+---@class coke.Context
+---@field hl string
+---@field hl_rev string
+
 ---@class coke.EventHandler
 ---@field kind (string|string[])?
 ---@field opts (vim.api.keyset.create_autocmd|vim.api.keyset.create_autocmd[])?
 
 ---@class coke.Component
----@field fmt fun(): string
+---@field fmt fun(coke.Context): string
 ---@field colour (vim.api.keyset.highlight|fun():vim.api.keyset.highlight)?
 ---@field events coke.EventHandler?
 

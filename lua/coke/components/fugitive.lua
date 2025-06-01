@@ -4,6 +4,7 @@ local M = {
 
 local function cb(_)
 	M.head = vim.fn.FugitiveHead()
+	M.is_main = M.head == "main" or M.head == "master"
 	M.output = " ᚠ " .. M.head
 
 	local exec = vim.fn.FugitiveExecute(
@@ -45,28 +46,27 @@ function M.fmt()
 end
 
 function M.colour()
-	local head = vim.fn.FugitiveHead()
-	if head == "main" or head == "master" then
-		if M.dirty then
-			return {
-				bg = "#af5f5a",
-				fg = "#212121",
-				bold = true,
-			}
-		else
-			return {
-				bg = "#444444",
-				fg = "#abb2bf",
-				bold = true,
-			}
-		end
+	if not M.is_main then
+		return {
+			bg = "#444444",
+			fg = "#ABB2BF",
+			bold = true,
+		}
 	end
 
-	return {
-		bg = "#444444",
-		fg = "#ABB2BF",
-		bold = true,
-	}
+	if M.dirty then
+		return {
+			bg = "#af5f5a",
+			fg = "#212121",
+			bold = true,
+		}
+	else
+		return {
+			bg = "#444444",
+			fg = "#abb2bf",
+			bold = true,
+		}
+	end
 end
 
 return M

@@ -58,6 +58,7 @@ function M.init()
 
 
 	vim.api.nvim_set_hl(0, "CokeTransparent", { bg = "#212121" })
+	vim.api.nvim_set_hl(0, "CokeTransparentRev", { bg = "#212121", reverse = true })
 
 	---@param event coke.EventHandler
 	local add_event = function(event)
@@ -107,40 +108,44 @@ end
 
 function M.refresh_status(ev)
 	local output = {}
-	local winnr = vim.api.nvim_get_current_win()
-	for i, component in ipairs(M.config.components.left) do
-		local hl_name = "CokeLeft" .. tostring(i) .. "W" .. tostring(winnr)
-		if component.colour == nil then
-			table.insert(output, "%#CokeTransparent#")
-		elseif type(component.colour) == "function" then
-			local colours = component.colour()
-			vim.api.nvim_set_hl(0, hl_name, colours)
-			table.insert(output, "%#" .. hl_name .. "#")
+
+	---@param i integer
+	---@param dir "Left"|"Right"
+	---@param winnr integer
+	---@param component coke.Component
+	local render_part = function(i, dir, winnr, component)
+		local hl_name = "Coke" .. dir .. tostring(i) .. "W" .. tostring(winnr)
+		local ctx = {
+			hl = "",
+			hl_rev = "",
+		} --[[@as coke.Context]]
+
+		local colour = type(component.colour) == "function" and component.colour() or component.colour
+		if colour == nil then
+			ctx.hl = "%#CokeTransparent#"
+		else
+			vim.api.nvim_set_hl(0, hl_name, colour)
+			ctx.hl = "%#" .. hl_name .. "#"
+
+			colour.reverse = colour.reverse ~= nil and not colour.reverse or true
+			vim.api.nvim_set_hl(0, hl_name .. "Reversed", colour)
+			ctx.hl_rev = "%#" .. hl_name .. "Reversed#"
 		end
 
-		local txt = component.fmt()
+		table.insert(output, ctx.hl)
+		local txt = component.fmt(ctx)
 		table.insert(output, txt)
+	end
+
+	local winnr = vim.api.nvim_get_current_win()
+	for i, component in ipairs(M.config.components.left) do
+		render_part(i, "Left", winnr, component)
 	end
 
 	table.insert(output, "%#CokeTransparent#%= %#StatusLine#")
 
 	for i, component in ipairs(M.config.components.right) do
-		local hl_name = "CokeRight" .. tostring(i) .. "W" .. tostring(winnr)
-
-		if component.colour == nil then
-			table.insert(output, "%#CokeTransparent#")
-		elseif type(component.colour) == "function" then
-			local colours = component.colour()
-			vim.api.nvim_set_hl(0, hl_name, colours)
-			table.insert(output, "%#" .. hl_name .. "#")
-		elseif type(component.colour) == "table" then
-			local colour = component.colour --[[@as vim.api.keyset.highlight]]
-			vim.api.nvim_set_hl(0, hl_name, colour)
-			table.insert(output, "%#" .. hl_name .. "#")
-		end
-
-		local txt = component.fmt()
-		table.insert(output, txt)
+		render_part(i, "Right", winnr, component)
 	end
 
 	vim.wo.statusline = table.concat(output)

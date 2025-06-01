@@ -58,7 +58,7 @@ function M.init()
 
 
 	vim.api.nvim_set_hl(0, "CokeTransparent", { bg = "#212121" })
-	vim.api.nvim_set_hl(0, "CokeTransparentRev", { bg = "#212121", reverse = true })
+	vim.api.nvim_set_hl(0, "CokeTransparentReversed", { bg = "#212121", reverse = true })
 
 	---@param event coke.EventHandler
 	local add_event = function(event)
@@ -128,8 +128,9 @@ function M.refresh_status(ev)
 			ctx.hl = "%#" .. hl_name .. "#"
 
 			colour.reverse = colour.reverse ~= nil and not colour.reverse or true
-			vim.api.nvim_set_hl(0, hl_name .. "Reversed", colour)
-			ctx.hl_rev = "%#" .. hl_name .. "Reversed#"
+			colour.fg = "#212121"
+			vim.api.nvim_set_hl(0, hl_name .. "Glyph", colour)
+			ctx.hl_rev = "%#" .. hl_name .. "Glyph#"
 		end
 
 		table.insert(output, ctx.hl)

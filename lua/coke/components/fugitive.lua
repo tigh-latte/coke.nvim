@@ -38,18 +38,18 @@ M.events = { {
 	},
 } }
 
-function M.fmt()
+function M.fmt(ctx)
 	if vim.fn.FugitiveIsGitDir() == 0 then
 		return ""
 	end
-	return M.output
+	return M.output .. ctx.hl_rev .. ""
 end
 
 function M.colour()
 	if not M.is_main then
 		return {
-			bg = "#31392b",
-			fg = "#ABB2BF",
+			bg = "#73b8f1",
+			fg = "#212121",
 			bold = true,
 		}
 	end

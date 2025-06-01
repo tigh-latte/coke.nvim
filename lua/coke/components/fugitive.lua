@@ -48,7 +48,7 @@ end
 function M.colour()
 	if not M.is_main then
 		return {
-			bg = "#444444",
+			bg = "#31392b",
 			fg = "#ABB2BF",
 			bold = true,
 		}

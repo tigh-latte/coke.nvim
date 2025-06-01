@@ -1,11 +1,11 @@
 ---@class coke.EventHandler
----@field events string|string[]
----@field fmt fun(ev: vim.api.keyset.create_autocmd.callback_args): boolean?
+---@field kind (string|string[])?
+---@field opts (vim.api.keyset.create_autocmd|vim.api.keyset.create_autocmd[])?
 
 ---@class coke.Component
 ---@field fmt fun(): string
----@field colour vim.api.keyset.highlight|fun():vim.api.keyset.highlight
----@field event coke.EventHandler?
+---@field colour (vim.api.keyset.highlight|fun():vim.api.keyset.highlight)?
+---@field events coke.EventHandler?
 
 ---@class coke.Components
 ---@field left coke.Component[]

@@ -5,6 +5,8 @@ local M = {
 		components = {
 			left = {
 				require("coke.components.mode"),
+				require("coke.components.fugitive"),
+				require("coke.components.file"),
 			},
 			right = {
 				require("coke.components.location"),
@@ -53,18 +55,38 @@ function M.init()
 		}
 	)
 
+
+	vim.api.nvim_set_hl(0, "CokeTransparent", { bg = "#212121" })
+
+	---@param event coke.EventHandler
+	local add_event = function(event)
+		if type(event.opts.callback) == "function" then
+			event.opts.callback = M.wrap(event.opts.callback)
+		end
+		vim.api.nvim_create_autocmd(event.kind, event.opts)
+	end
 	for _, component in ipairs(M.config.components.left) do
-		vim.api.nvim_create_autocmd(component.event.events, {
-			group = M.state.augroup,
-			callback = M.wrap(component.event.fmt),
-		})
+		if component.events ~= nil then
+			if vim.isarray(component.events) then
+				for _, event in ipairs(component.events) do
+					add_event(event)
+				end
+			else
+				add_event(component.events)
+			end
+		end
 	end
 
 	for _, component in ipairs(M.config.components.right) do
-		vim.api.nvim_create_autocmd(component.event.events, {
-			group = M.state.augroup,
-			callback = M.wrap(component.event.fmt),
-		})
+		if component.events ~= nil then
+			if vim.isarray(component.events) then
+				for _, event in ipairs(component.events) do
+					add_event(event)
+				end
+			else
+				add_event(component.events)
+			end
+		end
 	end
 end
 
@@ -87,17 +109,19 @@ function M.refresh_status(ev)
 	local winnr = vim.api.nvim_get_current_win()
 	for i, component in ipairs(M.config.components.left) do
 		local hl_name = "CokeLeft" .. tostring(i) .. "W" .. tostring(winnr)
-		if type(component.colour) == "function" then
+		if component.colour == nil then
+			table.insert(output, "%#CokeTransparent#")
+		elseif type(component.colour) == "function" then
 			local colours = component.colour()
 			vim.api.nvim_set_hl(0, hl_name, colours)
+			table.insert(output, "%#" .. hl_name .. "#")
 		end
 
 		local txt = component.fmt()
-		table.insert(output, "%#" .. hl_name .. "#")
 		table.insert(output, txt)
 	end
 
-	table.insert(output, "%#StatusLine#%=%t ")
+	table.insert(output, "%#CokeTransparent#%=%#StatusLine# ")
 
 	for i, component in ipairs(M.config.components.right) do
 		local hl_name = "CokeRight" .. tostring(i) .. "W" .. tostring(winnr)
@@ -106,8 +130,8 @@ function M.refresh_status(ev)
 			vim.api.nvim_set_hl(0, hl_name, colours)
 			table.insert(output, "%#" .. hl_name .. "#")
 		elseif type(component.colour) == "table" then
-			component.colour = component.colour --[[@as vim.api.keyset.highlight]]
-			vim.api.nvim_set_hl(0, hl_name, component.colour)
+			local colour = component.colour --[[@as vim.api.keyset.highlight]]
+			vim.api.nvim_set_hl(0, hl_name, colour)
 			table.insert(output, "%#" .. hl_name .. "#")
 		end
 

@@ -9,6 +9,7 @@ local M = {
 				require("coke.components.file"),
 			},
 			right = {
+				require("coke.components.ft"),
 				require("coke.components.location"),
 			},
 		},
@@ -121,11 +122,14 @@ function M.refresh_status(ev)
 		table.insert(output, txt)
 	end
 
-	table.insert(output, "%#CokeTransparent#%=%#StatusLine# ")
+	table.insert(output, "%#CokeTransparent#%= %#StatusLine#")
 
 	for i, component in ipairs(M.config.components.right) do
 		local hl_name = "CokeRight" .. tostring(i) .. "W" .. tostring(winnr)
-		if type(component.colour) == "function" then
+
+		if component.colour == nil then
+			table.insert(output, "%#CokeTransparent#")
+		elseif type(component.colour) == "function" then
 			local colours = component.colour()
 			vim.api.nvim_set_hl(0, hl_name, colours)
 			table.insert(output, "%#" .. hl_name .. "#")

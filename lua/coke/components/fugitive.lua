@@ -41,7 +41,6 @@ function M.fmt()
 	if vim.fn.FugitiveIsGitDir() == 0 then
 		return ""
 	end
-
 	return M.output
 end
 
@@ -49,7 +48,7 @@ function M.colour()
 	local head = vim.fn.FugitiveHead()
 	if head == "main" or head == "master" then
 		return {
-			bg = M.dirty and "#af5f5a" or "#d19a66",
+			bg = M.dirty and "#af5f5a" or "#444444",
 			fg = "#212121",
 			bold = true,
 		}

@@ -39,10 +39,8 @@ M.events = { {
 } }
 
 function M.fmt(ctx)
-	if vim.fn.FugitiveIsGitDir() == 0 then
-		return ""
-	end
-	return M.output .. ctx.hl_rev .. ""
+	if not ctx.active or vim.fn.FugitiveIsGitDir() == 0 then return "" end
+	return M.output -- .. ctx.hl_rev .. ""
 end
 
 function M.colour()

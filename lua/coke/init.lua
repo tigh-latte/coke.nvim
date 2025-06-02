@@ -1,4 +1,11 @@
 local M = {
+	wins = setmetatable({}, {
+		__index = function(t, k)
+			t[k] = {}
+			return t
+		end,
+	}),
+	bufs = {},
 	---@type coke.Config
 	config = {
 		enabled = true,
@@ -10,6 +17,7 @@ local M = {
 			},
 			right = {
 				require("coke.components.ft"),
+				require("coke.components.diagnostics"),
 				require("coke.components.location"),
 			},
 		},
@@ -36,13 +44,18 @@ function M.toggle()
 end
 
 function M.init()
+	M.wins[vim.api.nvim_get_current_win()].active = true
 	M.state.augroup = vim.api.nvim_create_augroup("coke.nvim", { clear = true })
 
 	vim.api.nvim_create_autocmd({ "BufWinEnter", "WinEnter" },
 		{
 			group = M.state.augroup,
-			callback = M.wrap(function(args)
-				M.state.buf_id = args.buf
+			callback = M.wrap(function(ev)
+				local win_cfg = vim.api.nvim_win_get_config(ev.buf)
+				if win_cfg.zindex then
+					M.wins[vim.api.nvim_get_current_win()].active = true
+					M.state.buf_id = ev.buf
+				end
 			end),
 		}
 	)
@@ -50,12 +63,15 @@ function M.init()
 	vim.api.nvim_create_autocmd({ "BufWinLeave", "WinLeave" },
 		{
 			group = M.state.augroup,
-			callback = M.wrap(function(args)
+			callback = M.wrap(function(ev)
+				local win = M.wins[vim.api.nvim_get_current_win()]
+				if ev.event == "WinLeave" and win then
+					M.wins[vim.api.nvim_get_current_win()].active = false
+				end
 				-- M.state.buf_id = args.buf
 			end),
 		}
 	)
-
 
 	vim.api.nvim_set_hl(0, "CokeTransparent", { bg = "#212121" })
 	vim.api.nvim_set_hl(0, "CokeTransparentReversed", { bg = "#212121", reverse = true })
@@ -101,11 +117,12 @@ end
 function M.wrap(fn)
 	return function(ev)
 		local ret = fn(ev)
-		M.refresh_status()
+		M.refresh_status(ev)
 		return ret
 	end
 end
 
+---@param ev vim.api.keyset.create_autocmd.callback_args
 function M.refresh_status(ev)
 	local output = {}
 
@@ -118,9 +135,17 @@ function M.refresh_status(ev)
 		local ctx = {
 			hl = "",
 			hl_rev = "",
+			bufnr = ev.buf,
+			winnr = vim.api.nvim_get_current_win(),
+			active = M.wins[vim.api.nvim_get_current_win()].active,
 		} --[[@as coke.Context]]
 
-		local colour = type(component.colour) == "function" and component.colour() or component.colour
+		local colour
+		if type(component.colour) == "function" then
+			colour = component.colour(ctx)
+		else
+			colour = component.colour
+		end
 		if colour == nil then
 			ctx.hl = "%#CokeTransparent#"
 		else
@@ -143,11 +168,12 @@ function M.refresh_status(ev)
 		render_part(i, "Left", winnr, component)
 	end
 
-	table.insert(output, "%#CokeTransparent#%= %#StatusLine#")
+	table.insert(output, "%#CokeTransparent#%= ")
 
 	for i, component in ipairs(M.config.components.right) do
 		render_part(i, "Right", winnr, component)
 	end
+	table.insert(output, "%#CokeTransparent#")
 
 	vim.wo.statusline = table.concat(output)
 end

@@ -13,8 +13,8 @@ local M = {
 		[""] = { txt = "V-BLOCK", fg = "#212121", bg = "#d19a66" },
 		s = { txt = "S", fg = "#212121", bg = "#d19a66" },
 		S = { txt = "S", bg = "#d19a66" },
-		nt = { txt = "T", bg = "#53892c" },
-		t = { txt = "T", bg = "#53892c" },
+		nt = { txt = "t", bg = "#53892c" },
+		t = { txt = "t", bg = "#53892c" },
 	},
 }
 
@@ -29,6 +29,7 @@ M.events = {
 ---@param ctx coke.Context
 ---@return string
 function M.fmt(ctx)
+	if not ctx.active then return "" end
 	return ctx.hl_rev .. "" .. ctx.hl .. " " .. M.mode_map[M.mode].txt .. " " --.. ctx.hl_rev .. ""
 end
 

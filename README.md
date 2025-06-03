@@ -1,7 +1,3 @@
-## Coke
-
-My kind of line.
-
 ### Overview
 
 Another plugin built by me, for me, that you shouldn't use.
@@ -16,6 +12,14 @@ So, I finally decided to bite the bullet and switched to [`lualine`](https://git
 1. Event driven, so updates happen as fast as neovim can fire them.
 1. Fugitive integration, to shout at you if you're editing on `main`.
 1. LSP errors and warnings, driven from diagnostic events.
+
+### Some pictures
+
+![normal mode](./doc/normalmode.png)
+![insert mode](./doc/insertmode.png)
+![command mode](./doc/commandmode.png)
+![editing main](./doc/editingmain.png)
+![diagnostics](./doc/diagnostics.png)
 
 ### Installation
 
@@ -34,6 +38,7 @@ To do.
 
 ### Things I would like to do
 
-- [ ] Add screenshots to this repo
+- [x] Add screenshots to this repo
+  - [ ] Add more screenshots to this repo
 - [ ] Add a sane default colour scheme (which isn't the one I use)
 - [ ] Make the config api a touch easier

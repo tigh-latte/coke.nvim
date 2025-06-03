@@ -2,34 +2,18 @@ local M = {
 	warn = 0,
 	error = 0,
 
+	diagnostics = {},
 	winbuf = {},
 }
 
-local function cb(ev)
-	local diagnostics = vim.diagnostic.get(ev.bufnr, {
-		namespace = M.ns,
-		severity = {
-			vim.diagnostic.severity.WARN,
-			vim.diagnostic.severity.ERROR,
-		},
-	})
-
-	local tally = {
-		[vim.diagnostic.severity.WARN] = 0,
-		[vim.diagnostic.severity.ERROR] = 0,
-	}
-	for _, diagnostic in ipairs(diagnostics) do
-		tally[diagnostic.severity] = tally[diagnostic.severity] + 1
-	end
-	M.warn = tally[vim.diagnostic.severity.WARN]
-	M.error = tally[vim.diagnostic.severity.ERROR]
-end
+local WARN = vim.diagnostic.severity.WARN
+local ERROR = vim.diagnostic.severity.ERROR
 
 M.events = { {
 	kind = "User",
 	opts = {
 		pattern = "CokeDiagnostic",
-		callback = cb,
+		callback = function(_) end,
 	},
 }, {
 	kind = "BufWinEnter",
@@ -45,49 +29,57 @@ M.events = { {
 }, {
 	kind = { "WinClosed" },
 	opts = {
-		callback = function(_)
+		callback = function(ev)
 			local winnr = vim.api.nvim_get_current_win()
-			local cfg = vim.api.nvim_win_get_config(winnr)
-			M.winbuf[winnr] = nil
+			M.winbuf[tonumber(ev.file)] = nil
 		end,
 	},
 } }
 
-
 vim.diagnostic.handlers["coke/notify"] = {
-	show = function(namespace, bufnr, diagnostics, opts)
-		local tally = {
-			[vim.diagnostic.severity.WARN] = 0,
-			[vim.diagnostic.severity.ERROR] = 0,
-		}
-
+	show = function(_, _, diagnostics, _)
 		for _, diagnostic in ipairs(diagnostics) do
-			tally[diagnostic.severity] = tally[diagnostic.severity] + 1
+			local bufnr = diagnostic.bufnr
+			if bufnr then
+				if not M.diagnostics[bufnr] then
+					M.diagnostics[bufnr] = { [WARN] = 0, [ERROR] = 0 }
+				end
+				M.diagnostics[bufnr][diagnostic.severity] = M.diagnostics[bufnr][diagnostic.severity] + 1
+			end
 		end
-		M.warn = tally[vim.diagnostic.severity.WARN]
-		M.error = tally[vim.diagnostic.severity.ERROR]
 
-		vim.api.nvim_exec_autocmds("User", {
-			pattern = "CokeDiagnostic",
-			data = { bufnr = bufnr },
-		})
+		vim.api.nvim_exec_autocmds("User", { pattern = "CokeDiagnostic" })
+	end,
+	hide = function(_, bufnr)
+		M.diagnostics[bufnr] = nil
 	end,
 }
 
 vim.diagnostic.config({
 	["coke/notify"] = {
 		log_level = vim.log.levels.INFO,
-		severity = { vim.diagnostic.severity.WARN, vim.diagnostic.severity.ERROR },
+		severity = { WARN, ERROR },
 	},
 })
 
 function M.fmt(ctx)
-	local output = ""
-	if M.warn > 0 then
-		output = output .. " W:" .. tostring(M.warn)
+	if not ctx.active then
+		return ""
 	end
-	if M.error > 0 then
-		output = output .. " E:" .. tostring(M.error)
+	local winbuf = M.winbuf[ctx.winnr]
+	local diagnostics = M.diagnostics[winbuf]
+	if not diagnostics then
+		return ""
+	end
+
+	local warns, errs = diagnostics[WARN], diagnostics[ERROR]
+
+	local output = ""
+	if warns > 0 then
+		output = output .. " W:" .. tostring(diagnostics[WARN])
+	end
+	if errs > 0 then
+		output = output .. " E:" .. tostring(diagnostics[ERROR])
 	end
 	if output:len() == 0 then
 		return output
@@ -95,7 +87,7 @@ function M.fmt(ctx)
 	return output .. " "
 end
 
-function M.colour()
+function M.colour(ctx)
 	return {
 		fg = "#212121",
 		bg = "#af5f5a",

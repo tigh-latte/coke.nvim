@@ -51,8 +51,8 @@ function M.init()
 		{
 			group = M.state.augroup,
 			callback = M.wrap(function(ev)
-				local win_cfg = vim.api.nvim_win_get_config(ev.buf)
-				if win_cfg.zindex then
+				local win_cfg = vim.api.nvim_win_get_config(vim.api.nvim_get_current_win())
+				if not win_cfg.zindex then
 					M.wins[vim.api.nvim_get_current_win()].active = true
 					M.state.buf_id = ev.buf
 				end

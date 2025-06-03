@@ -31,3 +31,9 @@ Using [lazy](https://github.com/folke/lazy.nvim.git):
 ### Options
 
 To do.
+
+### Things I would like to do
+
+- [ ] Add screenshots to this repo
+- [ ] Add a sane default colour scheme (which isn't the one I use)
+- [ ] Make the config api a touch easier

@@ -26,12 +26,4 @@ function M.fmt(ctx)
 	return output .. " "
 end
 
-function M.colour(ctx)
-	if not ctx.active then return nil end
-	return {
-		fg = "#212121",
-		bg = M.mode_map[vim.api.nvim_get_mode().mode].bg,
-	}
-end
-
 return M

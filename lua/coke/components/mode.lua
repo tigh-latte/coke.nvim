@@ -3,7 +3,7 @@ local M = {
 		n = { txt = "N", fg = "#212121", bg = "#d7af87" },
 		niI = { txt = "NI", bg = "#d7af87" },
 		no = { txt = "no", bg = "#d7af87" },
-		i = { txt = "I", fg = "#212121", bg = "#5fafaf" },
+		i = { txt = "I", fg = "#212121", bg = "#73b8f1" },
 		R = { txt = "R", bg = "#af5f5a" },
 		Rv = { txt = "Rv", bg = "#af5f5a" },
 		ic = { txt = "IC", c = "C", bg = "#53892c" },
@@ -21,7 +21,7 @@ local M = {
 M.events = {
 	kind = { "ModeChanged" },
 	opts = {
-		callback = function(ev)
+		callback = function(_)
 			M.mode = vim.api.nvim_get_mode().mode
 		end,
 	},
@@ -30,7 +30,7 @@ M.events = {
 ---@return string
 function M.fmt(ctx)
 	if not ctx.active then return "" end
-	return ctx.hl_rev .. "" .. ctx.hl .. " " .. M.mode_map[M.mode].txt .. " " --.. ctx.hl_rev .. ""
+	return ctx.hl_rev .. "" .. ctx.hl .. "  " .. M.mode_map[M.mode].txt .. "  " --.. ctx.hl_rev .. ""
 end
 
 function M.colour()

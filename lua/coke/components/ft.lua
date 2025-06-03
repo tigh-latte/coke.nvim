@@ -1,7 +1,7 @@
 local M = {}
 
 function M.fmt()
-	return " " .. vim.bo.ft .. " "
+	return " %{&filetype} "
 end
 
 return M

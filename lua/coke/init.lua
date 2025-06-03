@@ -17,6 +17,7 @@ local M = {
 			},
 			right = {
 				require("coke.components.ft"),
+				require("coke.components.encoding"),
 				require("coke.components.diagnostics"),
 				require("coke.components.location"),
 			},
@@ -30,7 +31,7 @@ local M = {
 function M.setup(config)
 	M.config = vim.tbl_deep_extend("force", M.config, config)
 
-	vim.api.nvim_create_user_command("CokeToggle", function(args)
+	vim.api.nvim_create_user_command("CokeToggle", function(_)
 		M.toggle()
 	end, {})
 
@@ -50,11 +51,10 @@ function M.init()
 	vim.api.nvim_create_autocmd({ "BufWinEnter", "WinEnter" },
 		{
 			group = M.state.augroup,
-			callback = M.wrap(function(ev)
+			callback = M.wrap(function(_)
 				local win_cfg = vim.api.nvim_win_get_config(vim.api.nvim_get_current_win())
 				if not win_cfg.zindex then
 					M.wins[vim.api.nvim_get_current_win()].active = true
-					M.state.buf_id = ev.buf
 				end
 			end),
 		}
@@ -68,7 +68,6 @@ function M.init()
 				if ev.event == "WinLeave" and win then
 					M.wins[vim.api.nvim_get_current_win()].active = false
 				end
-				-- M.state.buf_id = args.buf
 			end),
 		}
 	)

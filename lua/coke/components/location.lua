@@ -1,12 +1,9 @@
 local M = {
-	cur_line = 0,
-	cur_row = 0,
-	total_lines = 0,
 	mode_map = {
 		n = { fg = "#212121", bg = "#d7af87" },
 		niI = { bg = "#d7af87" },
 		no = { bg = "#d7af87" },
-		i = { fg = "#212121", bg = "#5fafaf" },
+		i = { fg = "#212121", bg = "#73b8f1" },
 		R = { bg = "#af5f5a" },
 		Rv = { bg = "#af5f5a" },
 		ic = { c = "C", bg = "#53892c" },
@@ -21,18 +18,8 @@ local M = {
 	},
 }
 
-M.events = {
-	kind = { "CursorMoved", "CursorMovedI" },
-	opts = {
-		callback = function(ev)
-			local line, row = unpack(vim.api.nvim_win_get_cursor(vim.api.nvim_get_current_win()))
-			M.cur_line, M.cur_row, M.total_lines = line, row + 1, vim.api.nvim_buf_line_count(0)
-		end,
-	},
-}
-
 function M.fmt(ctx)
-	local output = " %p%% %l/" .. M.total_lines .. ":" .. M.cur_row .. " "
+	local output = " %p%% %l/%L:%c "
 	if ctx.active then
 		return output .. ctx.hl_rev .. ""
 	end
@@ -46,7 +33,5 @@ function M.colour(ctx)
 		bg = M.mode_map[vim.api.nvim_get_mode().mode].bg,
 	}
 end
-
-M.events.opts.callback({})
 
 return M

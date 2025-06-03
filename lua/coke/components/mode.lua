@@ -1,5 +1,5 @@
 local M = {
-	mode_map = {
+	mode_map = setmetatable({
 		n = { txt = "N", fg = "#212121", bg = "#d7af87" },
 		niI = { txt = "NI", bg = "#d7af87" },
 		no = { txt = "no", bg = "#d7af87" },
@@ -15,7 +15,13 @@ local M = {
 		S = { txt = "S", bg = "#d19a66" },
 		nt = { txt = "t", bg = "#53892c" },
 		t = { txt = "t", bg = "#53892c" },
-	},
+	}, {
+		__index = function(t, k)
+			print(k)
+			t[k] = t.n
+			return t[k]
+		end,
+	}),
 }
 
 M.events = {
@@ -30,17 +36,17 @@ M.events = {
 ---@return string
 function M.fmt(ctx)
 	if not ctx.active then return "" end
-	return ctx.hl_rev .. "" .. ctx.hl .. "  " .. M.mode_map[M.mode].txt .. "  " --.. ctx.hl_rev .. ""
+	return ctx.hl_rev .. "" .. ctx.hl .. "  " .. ctx.modes[M.mode].txt .. "  " --.. ctx.hl_rev .. ""
 end
 
-function M.colour()
-	local mode = M.mode_map[M.mode]
-	return {
-		fg = mode.fg or "#212121",
-		bg = mode.bg,
-		bold = true,
-	}
-end
+-- function M.colour(ctx)
+-- 	local mode = ctx.modes[M.mode]
+-- 	return {
+-- 		fg = mode.fg or "#212121",
+-- 		bg = mode.bg,
+-- 		bold = true,
+-- 	}
+-- end
 
 M.events.opts.callback({})
 

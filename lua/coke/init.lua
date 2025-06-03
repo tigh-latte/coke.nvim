@@ -22,6 +22,24 @@ local M = {
 				require("coke.components.location"),
 			},
 		},
+		modes = {
+			n = { txt = "NORMAL", hl = { bg = "#d7af87", bold = true, fg = "#212121" } },
+			niI = { txt = "NORMAL", hl = { bg = "#d7af87" } },
+			no = { txt = "NORMAL", hl = { bg = "#d7af87" } },
+			i = { txt = "INSERT", hl = { bg = "#73b8f1", bold = true, fg = "#212121" } },
+			R = { txt = "REPLACE", hl = { bg = "#af5f5a" } },
+			Rv = { txt = "REPLACE", hl = { bg = "#af5f5a" } },
+			ic = { txt = "IC", hl = { bg = "#53892c", bold = true, fg = "#212121" } },
+			ix = { txt = "INS-X", hl = { bg = "#53892c" } },
+			c = { txt = "COMMAND", hl = { bg = "#53892c", bold = true, fg = "#212121" } },
+			v = { txt = "VISUAL", hl = { bg = "#d19a66", bold = true, fg = "#212121" } },
+			V = { txt = "VISUAL-LINE", hl = { bg = "#d19a66", bold = true, fg = "#212121" } },
+			[""] = { txt = "VISUAL-BLOCK", hl = { bg = "#d19a66", bold = true, fg = "#212121" } },
+			s = { txt = "SELECT", hl = { bg = "#d19a66", bold = true, fg = "#212121" } },
+			S = { txt = "SELECT", hl = { bg = "#d19a66", bold = true, fg = "#212121" } },
+			nt = { txt = "TERMINAL", hl = { bg = "#53892c", fg = "#212121" } },
+			t = { txt = "TERMINAL", hl = { bg = "#53892c", fg = "#212121" } },
+		},
 	},
 
 	state = {},
@@ -132,6 +150,7 @@ function M.refresh_status(ev)
 	local render_part = function(i, dir, winnr, component)
 		local hl_name = "Coke" .. dir .. tostring(i) .. "W" .. tostring(winnr)
 		local ctx = {
+			modes = M.config.modes,
 			hl = "",
 			hl_rev = "",
 			bufnr = ev.buf,
@@ -140,20 +159,29 @@ function M.refresh_status(ev)
 		} --[[@as coke.Context]]
 
 		local colour
-		if type(component.colour) == "function" then
+		if component.colour == nil then
+			colour = ctx.modes[vim.api.nvim_get_mode().mode].hl
+		elseif type(component.colour) == "function" then
 			colour = component.colour(ctx)
+			if colour == nil then
+				colour = ctx.modes[vim.api.nvim_get_mode().mode].hl
+			end
 		else
 			colour = component.colour
 		end
+
 		if colour == nil then
 			ctx.hl = "%#CokeTransparent#"
+		elseif type(colour) == "string" then
+			ctx.hl = colour
 		else
 			vim.api.nvim_set_hl(0, hl_name, colour)
 			ctx.hl = "%#" .. hl_name .. "#"
 
-			colour.reverse = colour.reverse ~= nil and not colour.reverse or true
+			local glyph = vim.deepcopy(colour)
+			glyph.reverse = colour.reverse ~= nil and not colour.reverse or true
 			colour.fg = "#212121"
-			vim.api.nvim_set_hl(0, hl_name .. "Glyph", colour)
+			vim.api.nvim_set_hl(0, hl_name .. "Glyph", glyph)
 			ctx.hl_rev = "%#" .. hl_name .. "Glyph#"
 		end
 

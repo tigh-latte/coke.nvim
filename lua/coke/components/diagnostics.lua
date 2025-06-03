@@ -6,6 +6,7 @@ local M = {
 	winbuf = {},
 }
 
+local HINT = vim.diagnostic.severity.HINT
 local WARN = vim.diagnostic.severity.WARN
 local ERROR = vim.diagnostic.severity.ERROR
 
@@ -30,7 +31,6 @@ M.events = { {
 	kind = { "WinClosed" },
 	opts = {
 		callback = function(ev)
-			local winnr = vim.api.nvim_get_current_win()
 			M.winbuf[tonumber(ev.file)] = nil
 		end,
 	},
@@ -42,7 +42,7 @@ vim.diagnostic.handlers["coke/notify"] = {
 			local bufnr = diagnostic.bufnr
 			if bufnr then
 				if not M.diagnostics[bufnr] then
-					M.diagnostics[bufnr] = { [WARN] = 0, [ERROR] = 0 }
+					M.diagnostics[bufnr] = { [HINT] = 0, [WARN] = 0, [ERROR] = 0 }
 				end
 				M.diagnostics[bufnr][diagnostic.severity] = M.diagnostics[bufnr][diagnostic.severity] + 1
 			end
@@ -58,7 +58,7 @@ vim.diagnostic.handlers["coke/notify"] = {
 vim.diagnostic.config({
 	["coke/notify"] = {
 		log_level = vim.log.levels.INFO,
-		severity = { WARN, ERROR },
+		severity = { HINT, WARN, ERROR },
 	},
 })
 
@@ -72,14 +72,17 @@ function M.fmt(ctx)
 		return ""
 	end
 
-	local warns, errs = diagnostics[WARN], diagnostics[ERROR]
+	local hints, warns, errs = diagnostics[HINT], diagnostics[WARN], diagnostics[ERROR]
 
 	local output = ""
+	if hints > 0 then
+		output = output .. " H:" .. tostring(hints)
+	end
 	if warns > 0 then
-		output = output .. " W:" .. tostring(diagnostics[WARN])
+		output = output .. " W:" .. tostring(warns)
 	end
 	if errs > 0 then
-		output = output .. " E:" .. tostring(diagnostics[ERROR])
+		output = output .. " E:" .. tostring(errs)
 	end
 	if output:len() == 0 then
 		return output
@@ -87,7 +90,7 @@ function M.fmt(ctx)
 	return output .. " "
 end
 
-function M.colour(ctx)
+function M.colour(_)
 	return {
 		fg = "#212121",
 		bg = "#af5f5a",

@@ -160,7 +160,7 @@ function M.refresh_status(ev)
 
 		local colour
 		if component.colour == nil then
-			colour = ctx.modes[vim.api.nvim_get_mode().mode].hl
+			colour = ctx.active and ctx.modes[vim.api.nvim_get_mode().mode].hl or "%#CokeTransparent#"
 		elseif type(component.colour) == "function" then
 			colour = component.colour(ctx)
 			if colour == nil then

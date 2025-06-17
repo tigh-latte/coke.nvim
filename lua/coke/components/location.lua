@@ -19,11 +19,7 @@ local M = {
 }
 
 function M:fmt(ctx)
-	local output = " %p%% %l/%L:%c "
-	if ctx.active then
-		return output
-	end
-	return output .. " "
+	return " %p%% %l/%L:%c "
 end
 
 return M

@@ -11,7 +11,7 @@ local M = {
 		enabled = true,
 		components = {
 			left = {
-				require("coke.components.inverse").new(""),
+				require("coke.components.inverse").new("██"),
 				require("coke.components.mode"),
 				require("coke.components.fugitive"),
 				require("coke.components.file"),
@@ -21,7 +21,7 @@ local M = {
 				require("coke.components.encoding"),
 				require("coke.components.diagnostics"),
 				require("coke.components.location"),
-				require("coke.components.inverse").new(""),
+				require("coke.components.inverse").new("█"),
 			},
 		},
 		modes = {

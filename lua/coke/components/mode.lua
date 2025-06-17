@@ -12,7 +12,7 @@ M.events = {
 ---@return string
 function M:fmt(ctx)
 	if not ctx.active then return "" end
-	return "  " .. ctx.modes[M.mode].txt .. "  "
+	return ctx.modes[M.mode].txt .. "  "
 end
 
 M.events.opts.callback({})

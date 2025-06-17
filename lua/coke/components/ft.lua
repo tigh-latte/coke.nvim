@@ -1,6 +1,6 @@
 local M = {}
 
-function M.fmt()
+function M:fmt()
 	return " %{&filetype} "
 end
 

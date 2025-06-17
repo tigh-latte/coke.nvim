@@ -11,6 +11,7 @@ local M = {
 		enabled = true,
 		components = {
 			left = {
+				require("coke.components.inverse").new(""),
 				require("coke.components.mode"),
 				require("coke.components.fugitive"),
 				require("coke.components.file"),
@@ -20,6 +21,7 @@ local M = {
 				require("coke.components.encoding"),
 				require("coke.components.diagnostics"),
 				require("coke.components.location"),
+				require("coke.components.inverse").new(""),
 			},
 		},
 		modes = {
@@ -144,7 +146,7 @@ function M.refresh_status(ev)
 	local output = {}
 
 	---@param i integer
-	---@param dir "Left"|"Right"
+	---@param dir "Left"|"Right
 	---@param winnr integer
 	---@param component coke.Component
 	local render_part = function(i, dir, winnr, component)
@@ -186,7 +188,7 @@ function M.refresh_status(ev)
 		end
 
 		table.insert(output, ctx.hl)
-		local txt = component.fmt(ctx)
+		local txt = component:fmt(ctx)
 		table.insert(output, txt)
 	end
 

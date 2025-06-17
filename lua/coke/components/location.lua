@@ -18,10 +18,10 @@ local M = {
 	},
 }
 
-function M.fmt(ctx)
+function M:fmt(ctx)
 	local output = " %p%% %l/%L:%c "
 	if ctx.active then
-		return output .. ctx.hl_rev .. ""
+		return output
 	end
 	return output .. " "
 end

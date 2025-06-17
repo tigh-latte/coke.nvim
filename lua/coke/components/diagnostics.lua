@@ -62,7 +62,7 @@ vim.diagnostic.config({
 	},
 })
 
-function M.fmt(ctx)
+function M:fmt(ctx)
 	if not ctx.active then
 		return ""
 	end

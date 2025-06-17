@@ -38,7 +38,7 @@ M.events = { {
 	},
 } }
 
-function M.fmt(ctx)
+function M:fmt(ctx)
 	if not ctx.active or vim.fn.FugitiveIsGitDir() == 0 then return "" end
 	return M.output
 end

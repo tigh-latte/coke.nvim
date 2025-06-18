@@ -1,14 +1,17 @@
 local M = {}
 M.__index = M
 
-function M.new(text)
+---@param text string
+---@param hide_inactive boolean?
+function M.new(text, hide_inactive)
 	local obj = setmetatable({}, M)
 	obj.text = text
+	obj.hide_inactive = hide_inactive ~= nil and hide_inactive or true
 	return obj
 end
 
-function M:fmt()
-	return self.text
+function M:fmt(ctx)
+	return self.hide_inactive and (ctx.active and self.text or "") or self.text
 end
 
 function M.colour(ctx)

@@ -32,7 +32,7 @@ M.events = { {
 		callback = cb,
 	},
 }, {
-	kind = { "BufWritePost", "BufEnter", "BufWinEnter" },
+	kind = { "BufWritePost", "BufEnter", "BufWinEnter", "FocusGained" },
 	opts = {
 		callback = cb,
 	},

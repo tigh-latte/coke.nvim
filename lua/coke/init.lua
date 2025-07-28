@@ -92,8 +92,7 @@ function M.init()
 		}
 	)
 
-	vim.api.nvim_set_hl(0, "CokeTransparent", { bg = "#212121" })
-	vim.api.nvim_set_hl(0, "CokeTransparentReversed", { bg = "#212121", reverse = true })
+	vim.api.nvim_set_hl(0, "StatusLine", { bg = "none" })
 
 	---@param event coke.EventHandler
 	local add_event = function(event)
@@ -162,7 +161,7 @@ function M.refresh_status(ev)
 
 		local colour
 		if component.colour == nil then
-			colour = ctx.active and ctx.modes[vim.api.nvim_get_mode().mode].hl or "%#CokeTransparent#"
+			colour = ctx.active and ctx.modes[vim.api.nvim_get_mode().mode].hl or "%*"
 		elseif type(component.colour) == "function" then
 			colour = component.colour(ctx)
 			if colour == nil then
@@ -173,7 +172,7 @@ function M.refresh_status(ev)
 		end
 
 		if colour == nil then
-			ctx.hl = "%#CokeTransparent#"
+			ctx.hl = "%*"
 		elseif type(colour) == "string" then
 			ctx.hl = colour
 		else
@@ -182,7 +181,6 @@ function M.refresh_status(ev)
 
 			local glyph = vim.deepcopy(colour)
 			glyph.reverse = colour.reverse ~= nil and not colour.reverse or true
-			colour.fg = "#212121"
 			vim.api.nvim_set_hl(0, hl_name .. "Glyph", glyph)
 			ctx.hl_rev = "%#" .. hl_name .. "Glyph#"
 		end
@@ -197,12 +195,12 @@ function M.refresh_status(ev)
 		render_part(i, "Left", winnr, component)
 	end
 
-	table.insert(output, "%#CokeTransparent#%= ")
+	table.insert(output, "%*%= ")
 
 	for i, component in ipairs(M.config.components.right) do
 		render_part(i, "Right", winnr, component)
 	end
-	table.insert(output, "%#CokeTransparent#")
+	table.insert(output, "%*")
 
 	vim.wo.statusline = table.concat(output)
 end

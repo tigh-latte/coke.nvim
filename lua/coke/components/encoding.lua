@@ -6,7 +6,7 @@ end
 
 function M.colour(ctx)
 	if not ctx.active then
-		return "%#CokeTransparent#"
+		return "%*"
 	end
 
 	return {

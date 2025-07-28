@@ -20,7 +20,7 @@ function M:fmt(ctx)
 end
 
 function M.colour()
-	return "%#CokeTransparent#"
+	return "%*"
 end
 
 M.events.opts.callback({ file = vim.uv.cwd() })

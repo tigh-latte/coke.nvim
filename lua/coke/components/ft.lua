@@ -5,7 +5,7 @@ function M:fmt()
 end
 
 function M.colour()
-	return "%#CokeTransparent#"
+	return "%*"
 end
 
 return M

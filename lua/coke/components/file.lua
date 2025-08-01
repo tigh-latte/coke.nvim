@@ -1,13 +1,18 @@
 local M = {}
 
-M.events = {
-	kind = "DirChanged",
+M.events = { {
+	kind = { "DirChanged" },
 	opts = {
 		callback = function(ev)
 			M.cwd = ev.file
 		end,
 	},
-}
+}, {
+	kind = { "BufModifiedSet" },
+	opts = {
+		callback = function() end,
+	},
+} }
 
 function M:fmt(ctx)
 	local fname = vim.api.nvim_buf_get_name(vim.api.nvim_win_get_buf(ctx.winnr))
@@ -20,9 +25,12 @@ function M:fmt(ctx)
 end
 
 function M.colour()
+	if vim.bo.modified then
+		return { fg = "#c678dd" }
+	end
 	return "%*"
 end
 
-M.events.opts.callback({ file = vim.uv.cwd() })
+M.cwd = vim.uv.cwd()
 
 return M

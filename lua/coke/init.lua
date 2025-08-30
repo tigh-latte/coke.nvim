@@ -26,14 +26,14 @@ local M = {
 		},
 		modes = {
 			n = { txt = "NORMAL", hl = { bg = "#d7af87", bold = true, fg = "#212121" } },
-			niI = { txt = "NORMAL", hl = { bg = "#d7af87" } },
+			niI = { txt = "NORMAL", hl = { bg = "#d7af87", fg = "#212121" } },
 			no = { txt = "NORMAL", hl = { bg = "#d7af87" } },
 			i = { txt = "INSERT", hl = { bg = "#73b8f1", bold = true, fg = "#212121" } },
 			["r?"] = { txt = "REPLACE", hl = { bg = "#af5f5a", fg = "#212121" } },
 			R = { txt = "REPLACE", hl = { bg = "#af5f5a", fg = "#212121" } },
 			Rv = { txt = "REPLACE", hl = { bg = "#af5f5a", fg = "#212121" } },
 			ic = { txt = "IC", hl = { bg = "#53892c", bold = true, fg = "#212121" } },
-			ix = { txt = "INS-X", hl = { bg = "#53892c" } },
+			ix = { txt = "INS-X", hl = { bg = "#53892c", fg = "#212121" } },
 			c = { txt = "COMMAND", hl = { bg = "#53892c", bold = true, fg = "#212121" } },
 			v = { txt = "VISUAL", hl = { bg = "#d19a66", bold = true, fg = "#212121" } },
 			V = { txt = "VISUAL-LINE", hl = { bg = "#d19a66", bold = true, fg = "#212121" } },
@@ -98,6 +98,7 @@ function M.init()
 	---@param event coke.EventHandler
 	local add_event = function(event)
 		if type(event.opts.callback) == "function" then
+			---@diagnostic disable-next-line: param-type-mismatch
 			event.opts.callback = M.wrap(event.opts.callback)
 		end
 		vim.api.nvim_create_autocmd(event.kind, event.opts)

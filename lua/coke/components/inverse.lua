@@ -15,6 +15,8 @@ function M:fmt(ctx)
 end
 
 function M.colour(ctx)
+	local mode = vim.api.nvim_get_mode().mode
+	if ctx.modes[mode] == nil then return end
 	local clr = vim.deepcopy(ctx.modes[vim.api.nvim_get_mode().mode].hl)
 	clr.reverse = clr.reverse ~= nil and not clr.reverse or true
 

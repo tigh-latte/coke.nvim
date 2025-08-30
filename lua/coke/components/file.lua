@@ -15,6 +15,12 @@ M.events = { {
 } }
 
 function M:fmt(ctx)
+	if vim.bo.bt == "terminal" then
+		local parts = vim.split(vim.fn.expand("%"), ":")
+		return " %<" .. parts[#parts]
+	elseif vim.bo.bt == "help" then
+		return " %<%f "
+	end
 	local fname = vim.api.nvim_buf_get_name(vim.api.nvim_win_get_buf(ctx.winnr))
 
 	if vim.startswith(fname, M.cwd) then

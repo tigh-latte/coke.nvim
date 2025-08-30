@@ -29,6 +29,7 @@ local M = {
 			niI = { txt = "NORMAL", hl = { bg = "#d7af87" } },
 			no = { txt = "NORMAL", hl = { bg = "#d7af87" } },
 			i = { txt = "INSERT", hl = { bg = "#73b8f1", bold = true, fg = "#212121" } },
+			["r?"] = { txt = "REPLACE", hl = { bg = "#af5f5a", fg = "#212121" } },
 			R = { txt = "REPLACE", hl = { bg = "#af5f5a", fg = "#212121" } },
 			Rv = { txt = "REPLACE", hl = { bg = "#af5f5a", fg = "#212121" } },
 			ic = { txt = "IC", hl = { bg = "#53892c", bold = true, fg = "#212121" } },
